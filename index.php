@@ -19,19 +19,33 @@ var_dump($conn);
 if ($conn && $conn->connect_error) {
     echo "Connection failed: " . $conn->connect_error;
 } else {
-    if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+    if($_GET && is_array($_GET)){
+        if(isset($_GET['id']) && is_numeric($_GET['id'])) {
 
-        var_dump($_GET['id']);
-        $resultGet = intval($_GET['id']);
+            //var_dump($_GET['id']);
+            $resultGet = intval($_GET['id']);
+    
+            // ********** utilizzo SENZA Prepared statements
+            //$sql = "SELECT *  FROM departments WHERE id = $resultGet ";
 
-        $sql = "SELECT *  FROM departments WHERE id = $resultGet ";
+             // ********** utilizzo CON Prepared statements
+             $stmt = $conn->prepare("SELECT *  FROM departments WHERE id = ? ");
+             $stmt->bind_param('i', $getId);
 
-    }else{
+             $getId = $resultGet;
+
+             $stmt->execute();
+
+             $result = $stmt->get_result();
+
+        }
+    }
+    else{
         $sql = "SELECT *  FROM departments";
+        $result = $conn->query($sql);
 
     }
 
-    $result = $conn->query($sql);
     //echo '<h1> RESULT </h1>';
     //var_dump($result);
 
@@ -45,8 +59,7 @@ if ($conn && $conn->connect_error) {
         $keysRow[] = $result->fetch_fields();
         //var_dump($keysRow);
 
-        while ($row = $result->fetch_assoc()) {
-            //echo "Stanza N. " . $row[' room number'] . " piano: " . $row[' floor'];
+        while ($row = $result->fetch_assoc()) {   
             //var_dump($row);
             //*************** utilizzo la funzione  array_keys()
             //$keysRow =  array_keys($row);
