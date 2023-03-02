@@ -30,10 +30,12 @@ if ($conn && $conn->connect_error) {
         echo '<h1> ROW </h1>';
 
         $keysRow = [];
+        $resultRow = [];
         while ($row = $result->fetch_assoc()) {
             //echo "Stanza N. " . $row[' room number'] . " piano: " . $row[' floor'];
             var_dump($row);
             $keysRow =  array_keys($row);
+            $resultsRow[] = $row;
         }
         var_dump($keysRow);
     } elseif ($result) {
@@ -71,23 +73,24 @@ if ($conn && $conn->connect_error) {
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-            </tr>
+            <?php
+            //inserimento delle chiavi dinamico
+            foreach ($resultsRow as $resultRowKey => $resultRow) {
+            ?>
+                <tr>
+                    <?php
+                    //inserimento delle chiavi dinamico
+                    foreach ($resultsRow[$resultRowKey] as $singleResultRow) {
+                    ?>
+                        <td><?php echo $singleResultRow; ?></td>
+                    <?php
+                    }
+                    ?>
+                </tr>
+            <?php
+            }
+            ?>
+
         </tbody>
     </table>
 </body>
