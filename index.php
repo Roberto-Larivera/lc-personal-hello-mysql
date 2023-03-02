@@ -19,7 +19,17 @@ var_dump($conn);
 if ($conn && $conn->connect_error) {
     echo "Connection failed: " . $conn->connect_error;
 } else {
-    $sql = "SELECT *  FROM departments";
+    if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+
+        var_dump($_GET['id']);
+        $resultGet = intval($_GET['id']);
+
+        $sql = "SELECT *  FROM departments WHERE id = $resultGet ";
+
+    }else{
+        $sql = "SELECT *  FROM departments";
+
+    }
 
     $result = $conn->query($sql);
     //echo '<h1> RESULT </h1>';
@@ -42,7 +52,7 @@ if ($conn && $conn->connect_error) {
             //$keysRow =  array_keys($row);
             $resultsRow[] = $row;
         }
-        //var_dump($keysRow);
+        //var_dump($resultsRow);
     } elseif ($result) {
         echo "<h2>*** 0 results ***</h2>";
     } else {
@@ -68,6 +78,11 @@ if ($conn && $conn->connect_error) {
         <h1>
             <?php echo $keysRow[0][0]->table; ?>
         </h1>
+        <?php
+            if(isset($_GET['id']) && is_numeric($_GET['id'])) {
+                echo '<a href="index.php" > Torna Indietro</a>';
+            }
+        ?>
         <thead>
             <tr>
                 <!-- *************** utilizzo la funzione  array_keys()-->
@@ -102,10 +117,14 @@ if ($conn && $conn->connect_error) {
                 <tr>
                     <?php
                     //inserimento delle chiavi dinamico
-                    foreach ($resultsRow[$resultRowKey] as $singleResultRow) {
+                    foreach ($resultsRow[$resultRowKey] as $key => $singleResultRow) {
+                        if($key === 'name'){
+                            echo '<td> <a href="index.php/?id='.$resultRow['id'].'" >'.$singleResultRow.'</td>';
+                        }else{
                     ?>
                         <td><?php echo $singleResultRow; ?></td>
                     <?php
+                    }
                     }
                     ?>
                 </tr>
